@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package transcoder;
+
+// This ensures code is generated in the right place
+option go_package = "github.com/Chintukr2004/video-transcoder/proto/transcoder";
+
+service TranscoderService {
+  rpc StartTranscode(TranscodeRequest) returns (TranscodeResponse);
+}
+
+message TranscodeRequest {
+  string file_path = 1;
+  string target_format = 2; // e.g., "mp4", "avi", "webp"
+}
+
+message TranscodeResponse {
+  bool success = 1;
+  string message = 2;
+  string output_path = 3;
+}

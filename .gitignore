@@ -1,0 +1,14 @@
+# Go workspace and binaries
+api-gateway/api-gateway
+transcoder-service/transcoder-service
+
+# Ignore uploaded and converted video files
+api-gateway/uploads/*
+transcoder-service/output/*
+
+# Keep the directories themselves, just not the files inside them
+!api-gateway/uploads/.keep
+!transcoder-service/output/.keep
+
+# OS generated files
+.DS_Store
