@@ -4,5 +4,5 @@ use (
 	./api-gateway
 	./common
 	./proto
-	./transcoder-serivce
+	./transcoder-service
 )

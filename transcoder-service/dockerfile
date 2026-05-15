@@ -1,0 +1,12 @@
+FROM golang:alpine AS builder
+WORKDIR /workspace
+COPY . .
+WORKDIR /workspace/transcoder-service
+RUN go build -o /app/transcoder main.go
+FROM alpine:latest
+RUN apk add --no-cache ffmpeg
+WORKDIR /app
+COPY --from=builder /app/transcoder .
+RUN mkdir uploads output
+EXPOSE 50051
+CMD ["./transcoder"]

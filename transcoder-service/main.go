@@ -32,29 +32,25 @@ func (s *server) StartTranscode(ctx context.Context, req *pb.TranscodeRequest) (
 	nameWithoutExt := filename[0 : len(filename)-len(ext)]
 	outputPath := filepath.Join(outDir, fmt.Sprintf("%s_converted.%s", nameWithoutExt, req.TargetFormat))
 
-	// The Magic: Build the FFmpeg command
-	// -i : input file
-	// -preset ultrafast : speeds up encoding (great for development & testing)
-	cmd := exec.Command("ffmpeg", "-y", "-i", req.FilePath, "-preset", "ultrafast", outputPath)
 
-	// Run the command and capture any errors
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Printf(" FFmpeg Error: %v\nOutput: %s\n", err, string(output))
-		return &pb.TranscodeResponse{
-			Success: false,
-			Message: "Failed to transcode video",
-		}, nil // We return nil for the error so gRPC doesn't crash, we just return a "failed" response object
-	}
+	go func(inputFile, outputFile string){
+		log.Printf("Starting background transcode for %s...", inputFile)
+		cmd := exec.Command("ffmpeg", "-y", "-i", inputFile, "-preset","ultrafast", outputFile)
+		output, err := cmd.CombinedOutput()
 
-	log.Printf(" Successfully transcoded to: %s\n", outputPath)
-
+		if err != nil{
+			log.Printf("Background FFmpeg Error for %s: %v\nOutput: %s\n", inputFile,err, string(output))
+			return
+		}
+		log.Printf("Background transcode complete! Saved to: %s\n", outputFile)
+	}(req.FilePath, outputPath)
 	return &pb.TranscodeResponse{
-		Success:    true,
-		Message:    "Transcoding complete!",
-		OutputPath: outputPath,
-	}, nil
+		Success: true,
+		Message: "video added to proccesing queue",
+		OutputPath: "Proccessing in background",
+	}, nil 
 }
+	
 
 func main() {
 	//  Listen on a specific port for internal gRPC traffic

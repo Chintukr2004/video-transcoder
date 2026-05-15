@@ -11,7 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	
-	// Replace "yourusername" with your actual module path!
+	
 	pb "github.com/Chintukr2004/video-transcoder/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -21,9 +21,12 @@ func main() {
 	uploadDir := "uploads"
 	os.MkdirAll(uploadDir, os.ModePerm)
 
-	// Set up the gRPC connection to the Transcoder Service
-	// We use insecure credentials here because they are running on the same local machine.
-	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		
+	transcoderHost := os.Getenv("TRANSCODER_HOST")
+	if transcoderHost == "" {
+		transcoderHost = "localhost:50051"
+	}
+	conn, err := grpc.NewClient(transcoderHost, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to transcoder: %v", err)
 	}

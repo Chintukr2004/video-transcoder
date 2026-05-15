@@ -1,0 +1,17 @@
+# Stage 1: Build the Go binary
+FROM golang:alpine AS builder
+WORKDIR /workspace
+# Copy the entire monorepo so Go Workspaces function correctly
+COPY . .
+WORKDIR /workspace/api-gateway
+RUN go build -o /app/gateway main.go
+
+# Stage 2: Create the tiny production image
+FROM alpine:latest
+WORKDIR /app
+# Copy only the compiled binary from the builder stage
+COPY --from=builder /app/gateway .
+# Create the shared folder
+RUN mkdir uploads
+EXPOSE 8080
+CMD ["./gateway"]

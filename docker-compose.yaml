@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  gateway:
+    build:
+      context: . # Build from the root so the workspace is included
+      dockerfile: api-gateway/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - TRANSCODER_HOST=transcoder:50051
+    volumes:
+      - shared_uploads:/app/uploads # The shared volume
+
+  transcoder:
+    build:
+      context: .
+      dockerfile: transcoder-service/Dockerfile
+    volumes:
+      - shared_uploads:/app/uploads # Transcoder can now see the Gateway's files!
+      - ./output:/app/output        # Maps the container's output back to your local machine
+
+volumes:
+  shared_uploads:
