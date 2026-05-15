@@ -12,12 +12,14 @@ graph LR
     Worker -->|Reads File| Vol
     Worker -->|Executes| FFmpeg[FFmpeg Process]
     FFmpeg -->|Saves AVI| Output[(Local /output)]
+
 🚀 Quick Start
 Run the entire distributed system with a single command:
 
 Bash
 
 docker compose up --build
+
 🛠 Tech Stack
 Language: Go (Golang)
 
